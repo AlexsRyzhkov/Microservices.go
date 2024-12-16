@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package auth_server;
+
+option go_package = "github/api-gateway/gen/auth";
+
+import "google/api/annotations.proto";
+
+service AuthService {
+  rpc Register(AuthRequest) returns (AuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/register"
+      body: "*"
+    };
+  }
+  rpc Login(AuthRequest) returns (AuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
+  rpc RefreshToken(TokenRequest) returns (AuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/refresh-token"
+      body: "*"
+    };
+  }
+
+  rpc ValidateToken(TokenRequest) returns (ValidateTokenResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/validate-token"
+      body: "*"
+    };
+  }
+  rpc GetUser(TokenRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/auth/get-user"
+      body: "*"
+    };
+  }
+}
+
+message AuthRequest {
+  string name = 1;
+  string psw = 2;
+}
+
+message AuthResponse {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message ValidateTokenResponse{
+  int32 user_id = 1;
+}
+
+message TokenRequest {
+  string token = 1;
+}
+
+message User{
+  int32 id = 1;
+  string name = 2;
+}

@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = "github/api-gateway/gen/order";
+
+import "cars.proto";
+import 'google/protobuf/empty.proto';
+import 'google/api/annotations.proto';
+
+service OrderService {
+  rpc GetAll(google.protobuf.Empty) returns (OrderList) {
+    option (google.api.http) = {
+      get: "/v1/orders"
+    };
+  }
+  rpc GetOne(OneOrderRequest) returns (OneOrder) {
+    option (google.api.http) = {
+      get: "/v1/orders/{id}"
+    };
+  }
+  rpc Create(CreateOrderRequest) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/orders"
+      body: "*"
+    };
+  }
+}
+
+message Order{
+  int32 id = 1;
+  cars.Car car = 3;
+}
+
+message OrderList{
+  repeated Order orders = 1;
+}
+
+message OneOrder{
+  Order order = 1;
+}
+
+message OneOrderRequest{
+  int32 id = 1;
+}
+
+message CreateOrderRequest {
+  int32 car_id = 1;
+}
+
+message CreateOrderResponse{
+  int32 order_id = 1;
+}
