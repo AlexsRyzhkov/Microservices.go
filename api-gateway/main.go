@@ -11,15 +11,21 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"log"
 	"net/http"
+	"os"
 )
 
 var (
-	grpcAuthServerEndpoint  = "localhost:3000"
-	grpcCarsServerEndpoint  = "localhost:3001"
-	grpcOrderServerEndpoint = "localhost:3002"
+	grpcAuthServerEndpoint  = ":3000"
+	grpcCarsServerEndpoint  = ":3001"
+	grpcOrderServerEndpoint = ":3002"
 )
 
 func run() error {
+	authHost := os.Getenv("AUTH_HOST")
+	carsHost := os.Getenv("CARS_HOST")
+	orderHost := os.Getenv("ORDER_HOST")
+
+	apiServerHost := os.Getenv("API_SERVER_HOST")
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -27,22 +33,22 @@ func run() error {
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
-	err := auth.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, grpcAuthServerEndpoint, opts)
+	err := auth.RegisterAuthServiceHandlerFromEndpoint(ctx, mux, authHost+grpcAuthServerEndpoint, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = cars.RegisterCarsServiceHandlerFromEndpoint(ctx, mux, grpcCarsServerEndpoint, opts)
+	err = cars.RegisterCarsServiceHandlerFromEndpoint(ctx, mux, carsHost+grpcCarsServerEndpoint, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = order.RegisterOrderServiceHandlerFromEndpoint(ctx, mux, grpcOrderServerEndpoint, opts)
+	err = order.RegisterOrderServiceHandlerFromEndpoint(ctx, mux, orderHost+grpcOrderServerEndpoint, opts)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return http.ListenAndServe(":8000", mux)
+	return http.ListenAndServe(apiServerHost+":8000", mux)
 }
 
 func main() {

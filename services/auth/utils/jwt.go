@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc/codes"
@@ -11,6 +12,9 @@ import (
 var jwtSecret = []byte("oP80AQ")
 
 func generateToken(id uint, d time.Duration) (string, error) {
+	if id == 0 {
+		return "", errors.New("id can not be 0")
+	}
 
 	claims := jwt.MapClaims{
 		"user_id": id,

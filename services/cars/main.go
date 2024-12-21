@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"os"
 )
 
 func main() {
@@ -16,9 +17,11 @@ func main() {
 	closeClient := clients.AuthClientInit()
 	defer closeClient()
 
-	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", 3001))
+	serverHost := os.Getenv("SERVER_HOST")
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(serverHost+":%d", 3001))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Printf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
@@ -27,6 +30,6 @@ func main() {
 	log.Printf("server listening at %v", lis.Addr())
 
 	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		log.Printf("failed to serve: %v", err)
 	}
 }

@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pract8
+  labels:
+    app: pract8
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pract8
+  template:
+    metadata:
+      name: pract8
+      labels:
+        app: pract8
+    spec:
+      containers:
+        - name: db-auth
+          image: postgres
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_DB
+              value: pract8
+
+        - name: db-cars
+          image: postgres
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5433
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_DB
+              value: pract8
+
+        - name: db-order
+          image: postgres
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5434
+              protocol: TCP
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+            - name: POSTGRES_DB
+              value: pract8
+
+        - name: api-gateway
+          image: alexsryzhkov2003/api-gateway
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+              protocol: TCP
+              hostPort: 8000
+          env:
+            - name: AUTH_HOST
+              value: "localhost"
+            - name: CARS_HOST
+              value: "localhost"
+            - name: ORDER_HOST
+              value: "localhost"
+            - name: API_SERVER_HOST
+              value: "0.0.0.0"
+
+        - name: auth
+          image: alexsryzhkov2003/auth-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              value: "admin"
+            - name: DB_NAME
+              value: "pract8"
+            - name: DB_PORT
+              value: "5432"
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+
+        - name: cars
+          image: alexsryzhkov2003/cars-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3001
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              value: "admin"
+            - name: DB_NAME
+              value: "pract8"
+            - name: DB_PORT
+              value: "5433"
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+            - name: AUTH_CLIENT_HOST
+              value: "localhost"
+
+        - name: order
+          image: alexsryzhkov2003/order-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3002
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: "localhost"
+            - name: DB_USER
+              value: "admin"
+            - name: DB_PASSWORD
+              value: "admin"
+            - name: DB_NAME
+              value: "pract8"
+            - name: DB_PORT
+              value: "5434"
+            - name: SERVER_HOST
+              value: "0.0.0.0"
+            - name: AUTH_CLIENT_HOST
+              value: "localhost"
+            - name: CARS_CLIENT_HOST
+              value: "localhost"
+
+      restartPolicy: Always

@@ -9,26 +9,26 @@ import 'google/protobuf/empty.proto';
 
 service CarsService {
   rpc GetAll(google.protobuf.Empty) returns (CarsList) {
-    option (google.api.http) = {
-      get: "/v1/cars"
-    };
+//    option (google.api.http) = {
+//      get: "/v1/cars"
+//    };
   }
   rpc GetOne(OneCarRequest) returns (OneCars) {
-    option (google.api.http) = {
-      get: "/v1/cars/{id}"
-    };
+//    option (google.api.http) = {
+//      get: "/v1/cars/{id}"
+//    };
   }
   rpc Create(CreateCarRequest) returns (OneCars) {
-    option (google.api.http) = {
-      post: "/v1/cars"
-      body: "*"
-    };
+//    option (google.api.http) = {
+//      post: "/v1/cars"
+//      body: "*"
+//    };
   }
   rpc Update(UpdateCarRequest) returns (OneCars) {
-    option (google.api.http) = {
-      patch: "/v1/cars"
-      body: "*"
-    };
+//    option (google.api.http) = {
+//      patch: "/v1/cars"
+//      body: "*"
+//    };
   }
 }
 
